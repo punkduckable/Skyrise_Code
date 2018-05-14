@@ -1,5 +1,5 @@
 // Prototypes
-task JoyStick_Velocity_Control();	
+task Joystick_Velocity_Control();
 	const char Joystick_Change_Threshold = 15;
 	signed char L_Joystick;
 	signed char R_Joystick;
@@ -7,7 +7,7 @@ task JoyStick_Velocity_Control();
 task Tele_Drive();
 	const char Drive_Threshold = 8;
 
-task Tele_Set_Drive(signed char L_Drive_Power, signed char R_Drive_Power);
+void Tele_Set_Drive(signed char L_Drive_Power, signed char R_Drive_Power);
 	signed char L_Drive_Sign;
 	signed char R_Drive_Sign;
 	int L_Drive_Speed;
