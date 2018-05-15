@@ -86,6 +86,10 @@ task Auto_Drive() {
 			// Reset Iteration Counter
 			k = 0;
 
+			// Print first line of output (header). Start timer
+			writeDebugStreamLine("Time   Error  Velocity");
+			clearTimer(T1);
+
 			// Loop while drive is enabled, breakout counter is below limit.
 			while((Drive_Enable) && (Break_Out_Counter < Drive_Break_Out_Counter_Limit)) {
 				// Update Position value
@@ -135,7 +139,7 @@ task Auto_Drive() {
 				/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// Assign Left and Right Drive_Power
 
-				L_Drive_Power = P_Drive*Error[k] + D_Drive*Velocity; // Assign L
+				L_Drive_Power = P_Drive*Error[k]; // + D_Drive*Velocity; 
 
 				// Limit max velocity (before corrections) to specified power to drive power
 				if (abs(L_Drive_Power) > abs(Drive_PD.Power)) {
@@ -145,7 +149,7 @@ task Auto_Drive() {
 				R_Drive_Power = L_Drive_Power;				// Assign R
 
 				// Print P,D correction terms to debug stream (if connected)... mostly for tuning
-				writeDebugStreamLine("P: %i D: %i",P_Drive*Error[k],D_Drive*Velocity);
+				writeDebugStreamLine("%4i,  %4i,  %6.3f",time1(T1), Error[k], Velocity);
 
 				// 	Now we add in the corrections. These corrections are set in the Drive_Assist task.
 				L_Drive_Power += L_Drive_Correction;
