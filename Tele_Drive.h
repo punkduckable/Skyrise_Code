@@ -8,10 +8,6 @@ task Tele_Drive();
 	const char Drive_Threshold = 8;
 
 void Tele_Set_Drive(Byte L_Drive_Power, Byte R_Drive_Power);
-	Byte L_Drive_Sign;
-	Byte R_Drive_Sign;
-	int L_Drive_Speed;
-	int R_Drive_Speed;
 
 const unsigned char Tele_Power_Array[128] = {
 	0, 0, 0, 30, 30, 30, 30, 31, 31, 31,
@@ -122,6 +118,11 @@ task Tele_Drive() {
 
 // Set drive function
 void Tele_Set_Drive(Byte L_Drive_Power,Byte R_Drive_Power) {
+	Byte L_Drive_Sign;
+	Byte R_Drive_Sign;
+	int L_Drive_Speed;
+	int R_Drive_Speed;
+
 	// Find sign of inputs
 	L_Drive_Sign = (L_Drive_Power > 0) - (L_Drive_Power < 0);
 	R_Drive_Sign = (R_Drive_Power > 0) - (R_Drive_Power < 0);

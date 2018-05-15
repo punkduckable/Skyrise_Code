@@ -50,7 +50,7 @@ typedef struct {
 typedef signed char Byte;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Include files 
+// Include files
 #include "LCD.h"
 #include "Tele.c"
 #include "Auto.c"
@@ -64,10 +64,17 @@ void pre_auton()
 
 task autonomous()
 {
+	startTask(Auto_Drive);
+	startTask(Drive_Assist);
+
+	Drive(100,500);
+	while(Drive_Enable) {
+		wait1Msec(50);
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// User Control 
+// User Control
 task usercontrol()
 {
 	startTask(Joystick_Velocity_Control);
