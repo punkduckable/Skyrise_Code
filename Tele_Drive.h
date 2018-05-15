@@ -13,7 +13,7 @@ void Tele_Set_Drive(Byte L_Drive_Power, Byte R_Drive_Power);
 	int L_Drive_Speed;
 	int R_Drive_Speed;
 
-const unByte Tele_Power_Array[128] = {
+const unsigned char Tele_Power_Array[128] = {
 	0, 0, 0, 30, 30, 30, 30, 31, 31, 31,
 	31, 31, 31, 31, 31, 31, 31, 31, 31, 32,
 	32, 32, 32, 32, 32, 33, 33, 33, 33, 33,
