@@ -19,7 +19,7 @@ task Drive_Assist();
   	#define D_Drive_Assist (sqrt(4*P_Drive_Assist*Robot_MOI))
   	PD_Control Turn_PD = {.Power = 0, .Target = 0, .Target_Sign = 0, .Offset = 0;}				// REMOVE ME ONCE AUTP_TURN IS UPDATED
 
- const Byte Power_Array[128] = {
+ const unsigned char Auto_Power_Array[128] = {
 	0, 15, 15, 15, 15, 15, 15, 16, 16, 16,
 	16, 16, 16, 16, 16, 16, 16, 16, 16, 17,
 	17, 17, 17, 17, 17, 18, 18, 18, 18, 18,
@@ -246,12 +246,10 @@ void Auto_Set_Drive(int L_Drive_Power, int R_Drive_Power) {
 	L_Drive_Speed = (L_Drive_Speed > 127) ? 127 : L_Drive_Speed;
 	R_Drive_Speed = (R_Drive_Speed > 127) ? 127 : R_Drive_Speed;
 
-	motor[R_B_Drive] = R_Drive_Sign*Power_Array[R_Drive_Speed];
-	//motor[R_M_Drive] = R_Drive_Sign*Power_Array[R_Drive_Speed];
-	motor[R_F_Drive] = R_Drive_Sign*Power_Array[R_Drive_Speed];
-	motor[L_B_Drive] = L_Drive_Sign*Power_Array[L_Drive_Speed];
-	//motor[L_M_Drive] = L_Drive_Sign*Power_Array[L_Drive_Speed];
-	motor[L_F_Drive] = L_Drive_Sign*Power_Array[L_Drive_Speed];
+	motor[Back_R_Drive] = R_Drive_Sign*Auto_Power_Array[R_Drive_Speed];
+	motor[Front_R_Drive] = R_Drive_Sign*Auto_Power_Array[R_Drive_Speed];
+	motor[Back_L_Drive] = L_Drive_Sign*Auto_Power_Array[L_Drive_Speed];
+	motor[Front_L_Drive] = L_Drive_Sign*Auto_Power_Array[L_Drive_Speed];
 } // void Set_Drive(int Power)
 
 Byte mod(Byte a, Byte b) {  
