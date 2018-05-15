@@ -1,19 +1,19 @@
 // Prototypes
 task Joystick_Velocity_Control();
 	const char Joystick_Change_Threshold = 15;
-	signed char L_Joystick;
-	signed char R_Joystick;
+	Byte L_Joystick;
+	Byte R_Joystick;
 
 task Tele_Drive();
 	const char Drive_Threshold = 8;
 
-void Tele_Set_Drive(signed char L_Drive_Power, signed char R_Drive_Power);
-	signed char L_Drive_Sign;
-	signed char R_Drive_Sign;
+void Tele_Set_Drive(Byte L_Drive_Power, Byte R_Drive_Power);
+	Byte L_Drive_Sign;
+	Byte R_Drive_Sign;
 	int L_Drive_Speed;
 	int R_Drive_Speed;
 
-const char Tele_Power_Array[128] = {
+const unByte Tele_Power_Array[128] = {
 	0, 0, 0, 30, 30, 30, 30, 31, 31, 31,
 	31, 31, 31, 31, 31, 31, 31, 31, 31, 32,
 	32, 32, 32, 32, 32, 33, 33, 33, 33, 33,
@@ -33,15 +33,15 @@ const char Tele_Power_Array[128] = {
 task Joystick_Velocity_Control() {
 	////////////////////////////////////////////////////////////////////////
 	// Set up variables
-	signed char Current_L_Joystick;
-	signed char Old_L_Joystick;
+	Byte Current_L_Joystick;
+	Byte Old_L_Joystick;
 	int Change_In_L_Joystick;
-	signed char Sign_Change_In_L_Joystick;
+	Byte Sign_Change_In_L_Joystick;
 
-	signed char Current_R_Joystick;
-	signed char Old_R_Joystick;
+	Byte Current_R_Joystick;
+	Byte Old_R_Joystick;
 	int Change_In_R_Joystick;
-	signed char Sign_Change_In_R_Joystick;
+	Byte Sign_Change_In_R_Joystick;
 
 	////////////////////////////////////////////////////////////////////////
 	// Assign Old/Current values
@@ -102,8 +102,8 @@ task Joystick_Velocity_Control() {
 // Drive Task
 task Tele_Drive() {
 	// Declare local variables
-	signed char L_Drive_Power;
-	signed char R_Drive_Power;
+	Byte L_Drive_Power;
+	Byte R_Drive_Power;
 
 	while(true) {
 		// Update drive powers
@@ -121,7 +121,7 @@ task Tele_Drive() {
 
 
 // Set drive function
-void Tele_Set_Drive(signed char L_Drive_Power,signed char R_Drive_Power) {
+void Tele_Set_Drive(Byte L_Drive_Power,Byte R_Drive_Power) {
 	// Find sign of inputs
 	L_Drive_Sign = (L_Drive_Power > 0) - (L_Drive_Power < 0);
 	R_Drive_Sign = (R_Drive_Power > 0) - (R_Drive_Power < 0);

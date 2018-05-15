@@ -18,6 +18,13 @@ Programming:
 	Write Auto_Drive task. 
 		Use 5pt derivative approximation. Store old error values in an array.
 
+	Enable continuous error tracking
+
+	Replace Target_Sign member variable with local variables (it doesn't need
+	to be in the struct)
+	
+	Rewrite Auto_Turn task. MAKE SURE THAT ERROR IS TARGET - ANGLE!!!!
+
 	Write simple Auto_Intake, Auto_Skyrise, Auto_Tail functions.
 
 	Figure out conversion between encoder ticks and degrees.
