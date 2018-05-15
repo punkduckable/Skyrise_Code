@@ -5,7 +5,7 @@ void Drive(int Power, int Target_Value);
 task Auto_Drive();
 	PD_Control Drive_PD;
 	#define Drive_Refresh_Time 50 					// in miliseconds
-	#define P_Drive 1.25 							// needs to be large enough to get us to the target from any displacement
+	#define P_Drive 1.2 							// needs to be large enough to get us to the target from any displacement
 	#define D_Drive (sqrt(4*P_Drive*Robot_Mass)) 	// This is determined by solving 2nd order diff eq for critical damping. See notebook
 	#define Drive_Power_Minimum 12					// Lowest power before breakout
 	#define Drive_Break_Out_Counter_Limit 5 		// corresponds to ~.10 seconds
@@ -139,7 +139,7 @@ task Auto_Drive() {
 				/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// Assign Left and Right Drive_Power
 
-				L_Drive_Power = P_Drive*Error[k]; // + D_Drive*Velocity; 
+				L_Drive_Power = P_Drive*Error[k]; // + D_Drive*Velocity;
 
 				// Limit max velocity (before corrections) to specified power to drive power
 				if (abs(L_Drive_Power) > abs(Drive_PD.Power)) {

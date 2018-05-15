@@ -67,7 +67,7 @@ task autonomous()
 	startTask(Auto_Drive);
 	startTask(Drive_Assist);
 
-	Drive(100,500);
+	Drive(120,500);
 	while(Drive_Enable) {
 		wait1Msec(50);
 	}
