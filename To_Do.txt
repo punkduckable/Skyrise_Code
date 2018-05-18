@@ -7,18 +7,24 @@ Build:
 	Y axis dummy wheel
 	
 Programming:
-	Figure out robot's natural mass/damping
+	DONE: Write Auto_Drive task. 
+		Use 5pt derivative approximation. Store old error values in an array.
+		
+	DONE: 	Write Auto_Drive_Assist task.
+
+	DONE: Figure out robot's natural mass/damping
 		Create a P loop. Set the P to some value. Set an initial offset.
 		Let robot oscillate back and forth. Time periods, decay in amplitude.
 		Display these values to debug stream?
 		Use these values to find the robots 'natural mass' and 'natural damping'
 		values. From this, I should be able to pick a more effective D value (to 
 		get perfect critical damping). 
+		
+	Test robot's natural mass/damping values. See if we can get good critical damping
+	
+	Add headerfiles for all major functions/tasks! Include these before source files!!!
 
-	Write Auto_Drive task. 
-		Use 5pt derivative approximation. Store old error values in an array.
-
-	Enable continuous error tracking
+	Figure out conversion between encoder ticks and degrees.
 
 	Replace Target_Sign member variable with local variables (it doesn't need
 	to be in the struct)
@@ -27,10 +33,9 @@ Programming:
 
 	Write simple Auto_Intake, Auto_Skyrise, Auto_Tail functions.
 
-	Figure out conversion between encoder ticks and degrees.
-
-	Write Auto_Drive_Assist task.
-
-	Write Tele_Lift task (keep lift straight... basically drive straight)
-
+	Write Tele_Lift task (keep lift straight...)
+		This should function the same way that the drive straight task 
+	
 	Write Auto_Lift, Auto_Lift_Assist tasks
+	
+	Enable continuous error tracking (including y error tracking)
