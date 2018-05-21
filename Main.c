@@ -36,7 +36,6 @@ float Robot_MOI = Base_Robot_MOI*MOI_Conversion_Factor;// + .08+0.06;
 
 #define DEG_PER_TICK 0.40625
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Type definitions
 
@@ -50,10 +49,28 @@ typedef struct {
 typedef signed char Byte;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Include files
-#include "LCD.h"
-#include "Tele.c"
-#include "Auto.c"
+// Header files
+
+#include "Auto_Drive.h"
+//#include "Auto_Turn.h"
+//#include "Auto_Lift.h"
+#include "Tele_Drive.h"
+#include "Tele_Intake.h"
+#include "Tele_Lift.h"
+#include "Tele_Skyrise.h"
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Source files
+
+#include "LCD.c"
+#include "Auto_Drive.c"
+//#include "Auto_Turn.c"
+//#include "Auto_Lift.c"
+#include "Tele_Drive.c"
+#include "Tele_Intake.c"
+#include "Tele_Lift.c"
+#include "Tele_Skyrise.c"
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Auto, Pre Auto

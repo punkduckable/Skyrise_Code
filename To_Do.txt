@@ -19,10 +19,10 @@ Programming:
 		Use these values to find the robots 'natural mass' and 'natural damping'
 		values. From this, I should be able to pick a more effective D value (to 
 		get perfect critical damping). 
-		
-	Test robot's natural mass/damping values. See if we can get good critical damping
-	
+			
 	Add headerfiles for all major functions/tasks! Include these before source files!!!
+
+	Test robot's natural mass/damping values. See if we can get good critical damping
 
 	Figure out conversion between encoder ticks and degrees.
 
