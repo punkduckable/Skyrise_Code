@@ -5,7 +5,6 @@ void Drive(Byte Power, int Target_Value) {
 	// Set drive global variables
 	Drive_PD.Power = Power;
 	Drive_PD.Target = Target_Value;
-	Drive_PD.Target_Sign = (Drive_PD.Target > 0) - (Drive_PD.Target < 0);
 
 	// Enable auto_Drive
 	Drive_Enable = 1;
@@ -14,7 +13,6 @@ void Drive(Byte Power, int Target_Value) {
 task Auto_Drive() {
 	// Declare Local variables
 	int Position;										// Drive position
-	int Error[5];										// Error array
 	int Velocity;										// Drive velocity
 	Byte Error_Sign;									// Sign of error
 	unsigned char Break_Out_Counter = 0;				// Conter to determine if we should stop
@@ -40,7 +38,7 @@ task Auto_Drive() {
 
 			// Set Drive Error
 			for(i = 0; i < 5; i++) {
-				Error[i] = Drive_PD.Target;
+				Drive_PD.Error[i] = Drive_PD.Target;
 			} // for(i = 0; i < 5; i++) {
 			Velocity = 0;
 
@@ -55,8 +53,9 @@ task Auto_Drive() {
 				// Update Errors
 				k++;					// Incremenet Error counter
 				k = mod(k,5);
-				Error[k] = Drive_PD.Target - Position;
-				Error_Sign = (Error[k] > 0) - (Error[k] < 0);
+				Drive_PD.k = 0;
+				Drive_PD.Error[k] = Drive_PD.Target - Position;
+				Error_Sign = (Drive_PD.Error[k] > 0) - (Drive_PD.Error[k] < 0);
 
 				// Calculate Derivative
 				/* 	We use a 5 point approximation to the derivative:
@@ -77,18 +76,18 @@ task Auto_Drive() {
 					Finally, recall that the refresh time is in miliseconds. Thus, we have to convert it to
 					regular seconds
 				*/
-				Velocity = (1000./(12.*Drive_Refresh_Time))*( 25*Error[k]
-				                                            - 48*Error[mod(k-1,5)]
-				                                            + 36*Error[mod(k-2,5)]
-				                                            - 16*Error[mod(k-3,5)]
-				                                            +  3*Error[mod(k-4,5)]);
+				Velocity = (1000./(12.*Drive_Refresh_Time))*( 25*Drive_PD.Error[k]
+				                                            - 48*Drive_PD.Error[mod(k-1,5)]
+				                                            + 36*Drive_PD.Error[mod(k-2,5)]
+				                                            - 16*Drive_PD.Error[mod(k-3,5)]
+				                                            +  3*Drive_PD.Error[mod(k-4,5)]);
 				/* 	Check for stall (if velocity is below threshold).
 					We only run this check if we've moved 100 ticks twoards the target. This is done
 					because the robot starts off not moving. Thus, the robot may think it has stalled
 					when really it is just starting up. Thus, we only run this check once the robot has
 					started driving for a bit.
 				*/
-				if( abs(Error[k]) < (abs(Drive_PD.Target)-100) && abs(Velocity) < Drive_Min_Velocity) {
+				if( abs(Drive_PD.Error[k]) < (abs(Drive_PD.Target)-100) && abs(Velocity) < Drive_Min_Velocity) {
 					Break_Out_Counter++;
 				} // if( abs(Drive_Delta) < (abs(Drive_PD.Target)-100) && abs(Velocity) < Min_Velocity) {
 				else { Break_Out_Counter = 0; }			// Otherwise, reset breakout counter
@@ -96,7 +95,7 @@ task Auto_Drive() {
 				/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// Assign Left and Right Drive_Power
 
-				L_Drive_Power = P_Drive*Error[k] + D_Drive*Velocity; // Assign L
+				L_Drive_Power = P_Drive*Drive_PD.Error[k] + D_Drive*Velocity; // Assign L
 
 				// Limit max velocity (before corrections) to specified power to drive power
 				if (abs(L_Drive_Power) > abs(Drive_PD.Power)) {
@@ -106,7 +105,7 @@ task Auto_Drive() {
 				R_Drive_Power = L_Drive_Power;				// Assign R
 
 				// Print P,D correction terms to debug stream (if connected)... mostly for tuning
-				writeDebugStreamLine("P: %i D: %i",P_Drive*Error[k],D_Drive*Velocity);
+				writeDebugStreamLine("P: %i D: %i",P_Drive*Drive_PD.Error[k],D_Drive*Velocity);
 
 				// 	Now we add in the corrections. These corrections are set in the Drive_Assist task.
 				L_Drive_Power += L_Drive_Correction;
@@ -122,7 +121,7 @@ task Auto_Drive() {
 
 			//// shut down, reset global target values ////
 			Auto_Set_Drive(0,0);
-			Drive_PD.Offset = Error[k];
+			Drive_PD.Offset = Drive_PD.Error[k];
 			Drive_PD.Power = 0;
 			Drive_PD.Target = 0;
 			Drive_PD.Target_Sign = 0;
@@ -141,8 +140,8 @@ task Auto_Drive() {
 task Drive_Assist(){
 	// Declare Local variables
 	float Angle;
-	float Error[5];								// Note: Angles are measured as floating point numbers.
 	float Angular_Velocity;
+	Byte Target_Sign;
 	Byte i;										// Counter variable (for loops)
 	Byte k;										// Cycle variable to update Error Array
 
@@ -150,9 +149,11 @@ task Drive_Assist(){
 	while(true) {
 		// If enabled, set up drive stuff
 		if(Drive_Assist_Enable) {
+			Target_Sign = (Drive_PD.Target > 0) - (Drive_PD.Target < 0);
+
 			// Error, Velocity setup.
 			for(i = 0; i < 5; i++) {
-				Error[i] = Turn_PD.Offset;
+				Turn_PD.Error[i] = Turn_PD.Offset;
 			}
 			Angular_Velocity = 0;
 
@@ -166,17 +167,18 @@ task Drive_Assist(){
 				// Update Errors.
 				k++;					// Incremenet Error counter
 				k = mod(k,5);
-				Error[k] = 0 - Angle;	// With Drive assist, the target angle is always 0
+				Turn_PD.k = k;
+				Turn_PD.Error[k] = 0 - Angle;	// With Drive assist, the target angle is always 0
 
 				// Calculate Derivative
-				Angular_Velocity = (1000./(12.*Drive_Refresh_Time))*( 25*Error[k]
-				                                                    - 48*Error[mod(k-1,5)]
-				                                                    + 36*Error[mod(k-2,5)]
-				                                                    - 16*Error[mod(k-3,5)]
-				                                                    +  3*Error[mod(k-4,5)]);
+				Angular_Velocity = (1000./(12.*Drive_Refresh_Time))*( 25*Turn_PD.Error[k]
+				                                                    - 48*Turn_PD.Error[mod(k-1,5)]
+				                                                    + 36*Turn_PD.Error[mod(k-2,5)]
+				                                                    - 16*Turn_PD.Error[mod(k-3,5)]
+				                                                    +  3*Turn_PD.Error[mod(k-4,5)]);
 
 				// Assign L, R correction
-				R_Drive_Correction = P_Drive_Assist*Error[k] + D_Drive_Assist*Angular_Velocity;
+				R_Drive_Correction = P_Drive_Assist*Turn_PD.Error[k] + D_Drive_Assist*Angular_Velocity;
 				R_Drive_Correction = Drive_PD.Target_Sign*R_Drive_Correction; // So that the error is correct if the robot drives backwards
 				L_Drive_Correction = -R_Drive_Correction;
 				/* L correction is neg of R correction. To understand why this is, we need to consider
@@ -190,7 +192,7 @@ task Drive_Assist(){
 				wait1Msec(Drive_Refresh_Time);
 			} // while (Drive_Assist_Enable)
 			//// shut down, reset global target values ////
-			Turn_PD.Offset = Error[k];
+			Turn_PD.Offset = Turn_PD.Error[k];
 			L_Drive_Correction = 0;
 			R_Drive_Correction = 0;
 		}	// if(Drive_Enable)

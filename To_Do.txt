@@ -27,10 +27,9 @@ Programming:
 
 	DONE: Figure out conversion between encoder ticks and degrees.
 
-	Replace Target_Sign member variable with local variables (it doesn't need
-	to be in the struct)
-	
-	Rewrite Auto_Turn task. MAKE SURE THAT ERROR IS TARGET - ANGLE!!!!
+	Update PD_Control structure. Add Error array to the strcut remove Target_Sign 		(make it a local variable in the tasks that use it)!
+
+	DONE: Rewrite Auto_Turn task. MAKE SURE THAT ERROR IS TARGET - ANGLE!!!!
 
 	Write simple Auto_Intake, Auto_Skyrise, Auto_Tail functions.
 
