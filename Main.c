@@ -114,19 +114,22 @@ task autonomous()
 {
 	startTask(LCD);
 	startTask(Auto_Drive);
+	startTask(Auto_Turn);
 	startTask(Drive_Assist);
 
 	Drive_Timer = 0;
 	clearTimer(T1);
 
-	Drive(100,500);
-	while(Drive_Enable) {
-		wait1Msec(50);
+	Turn(100,360);
+	while(Turn_Enable) {
+		wait1Msec(10);
 	}
+
+	wait1Msec(2000);
 
 	Drive(100,500);
 	while(Drive_Enable) {
-		wait1Msec(50);
+		wait1Msec(10);
 	}
 
 	Drive_Timer = time1(T1);
