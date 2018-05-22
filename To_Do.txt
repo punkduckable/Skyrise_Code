@@ -23,9 +23,9 @@ Programming:
 			
 	DONE: Add headerfiles for all major functions/tasks! Include these before source files!!!
 
-	Test robot's natural mass/damping values. See if we can get good critical damping
+	DONE: Test robot's natural mass/damping values. See if we can get good critical damping
 
-	Figure out conversion between encoder ticks and degrees.
+	DONE: Figure out conversion between encoder ticks and degrees.
 
 	Replace Target_Sign member variable with local variables (it doesn't need
 	to be in the struct)
@@ -38,5 +38,9 @@ Programming:
 		This should function the same way that the drive straight task 
 	
 	Write Auto_Lift, Auto_Lift_Assist tasks
-	
-	Enable continuous error tracking (including y error tracking)
+
+	Improve drive PD constants
+
+	Improve Turn PD constants
+
+	Improve Lift PD constants
