@@ -24,11 +24,11 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Dynamic properties of robot
 
+#define NATURAL_ROBOT_MASS 0.0169119			// Measured using oscillation test. m = k/(4(pi^2+ln(A1/A2)^2))
+#define NATURAL_ROBOT_DAMPING 0.0946197			// Measured using Oscillation test. d = k*ln(A1/A2) /(pi^2 + ln(A1/A2)^2)
 #define Base_Robot_Mass 6.7 // In Kg
 #define Mass_Conversion_Factor .00043
 float Robot_Mass = Base_Robot_Mass*Mass_Conversion_Factor;
-#define Base_Mobile_Goal_Mass 1.7
-#define Mobile_Goal_Mass (Base_Mobile_Goal_Mass*Mass_Conversion_Factor) // Kg
 
 #define Base_Robot_MOI .17 // Kg-M^2
 #define MOI_Conversion_Factor .05
