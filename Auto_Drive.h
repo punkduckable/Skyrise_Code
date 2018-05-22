@@ -7,13 +7,13 @@ void Drive(int Power, int Target_Value);
 
 task Auto_Drive();
 	PD_Control Drive_PD;
-	#define Drive_Refresh_Time 50 								// in miliseconds
-	#define P_Drive 1.25 										// needs to be large enough to get us to the target from any displacement
+	#define Drive_Refresh_Time 15                             // in miliseconds
+	#define P_Drive 1.2                                       // needs to be large enough to get us to the target from any displacement
 	#define D_Drive (sqrt(4*P_Drive*NATURAL_ROBOT_MASS)\
-	                               -NATURAL_ROBOT_DAMPING) 		// This is determined by solving 2nd order diff eq for critical damping. See notebook
-	#define Drive_Power_Minimum 12								// Lowest power before breakout
-	#define Drive_Break_Out_Counter_Limit 5 					// corresponds to ~.10 seconds
-	#define Drive_Min_Velocity 20								// In ticks per second
+	                               -NATURAL_ROBOT_DAMPING)    // This is determined by solving 2nd order diff eq for critical damping. See notebook
+	#define Drive_Power_Minimum 12                            // Lowest power before breakout
+	#define Drive_Break_Out_Counter_Limit 5                   // corresponds to ~.10 seconds
+	#define Drive_Min_Velocity 20                             // In ticks per second
 
 task Drive_Assist();
 	short Drive_Assist_Enable = 0;
@@ -24,8 +24,8 @@ task Drive_Assist();
  	PD_Control Turn_PD;											// REMOVE ME ONCE AUTP_TURN IS UPDATED
 
 const unsigned char Auto_Power_Array[128] = {
-	0, 26, 26, 27, 27, 27, 27, 27, 29, 29,
-	29, 29, 29, 29, 29, 29, 29, 30, 30, 30,
+	0,   8, 10, 12, 14, 16, 18, 20, 22, 24,
+	26, 28, 29, 29, 29, 29, 29, 30, 30, 30,
 	30, 30, 31, 31, 31, 31, 32, 32, 32, 32,
 	32, 32, 32, 32, 33, 33, 34, 34, 34, 34,
 	35, 35, 35, 36, 36, 36, 36, 37, 38, 38,
