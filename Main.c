@@ -37,11 +37,11 @@ float Robot_MOI = Base_Robot_MOI*MOI_Conversion_Factor;// + .08+0.06;
 typedef signed char Byte;
 
 typedef struct {
-	Byte Power;                                 // Maximum power value 
+	Byte Power;                                 // Maximum power value
 	int Target;                                 // Target value
 	float Error[5];                             // Error array
 	Byte k;                                     // Error arry index counter (tells us which element of Error is newest)
-	int Offset;                                 // Error offset (for error handoff)
+	float Offset;                               // Error offset (for error handoff)
 } PD_Control;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,15 +120,20 @@ task autonomous()
 
 	Drive_Timer = 0;
 	clearTimer(T1);
-
+	/*
 	Turn(100,360);
 	while(Turn_Enable) {
 		wait1Msec(10);
 	}
 
 	wait1Msec(2000);
+	*/
+	Drive(70,1000);
+	while(Drive_Enable) {
+		wait1Msec(10);
+	}
 
-	Drive(100,500);
+	Drive(70,-1000);
 	while(Drive_Enable) {
 		wait1Msec(10);
 	}

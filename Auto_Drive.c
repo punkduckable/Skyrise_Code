@@ -12,10 +12,10 @@ void Drive(Byte Power, int Target_Value) {
 
 task Auto_Drive() {
 	// Declare Local variables
-	int Position;										// Drive position
-	int Velocity;										// Drive velocity
+	int Position;										  // Drive position
+	int Velocity;										  // Drive velocity
 	Byte Error_Sign;									// Sign of error
-	unsigned char Break_Out_Counter = 0;				// Conter to determine if we should stop
+	Byte Break_Out_Counter = 0;				// Conter to determine if we should stop
 	int L_Drive_Power, R_Drive_Power;					// Power for left and right side of drive
 	Byte i;												// For loop counters
 	Byte k;												// Used to know which value of Error Array to update
@@ -23,7 +23,6 @@ task Auto_Drive() {
 	// Setup Drive_PD.
 	Drive_PD.Power = 0;
 	Drive_PD.Target = 0;
-	Drive_PD.Target_Sign = 0;
 	Drive_PD.Offset = 0;
 
 	// Loop continuously, waiting to be enabled
@@ -48,13 +47,13 @@ task Auto_Drive() {
 			// Loop while drive is enabled, breakout counter is below limit.
 			while((Drive_Enable) && (Break_Out_Counter < Drive_Break_Out_Counter_Limit)) {
 				// Update Position value
-				Position = .5*(SensorValue[R_Drive_Encoder] + SensorValue[L_Drive_Encoder]) - Drive_PD.Offset;
+				Position = .5*(SensorValue[R_Drive_Encoder] + SensorValue[L_Drive_Encoder]) + Drive_PD.Offset;
 
 				// Update Errors
 				k++;					// Incremenet Error counter
 				k = mod(k,5);
-				Drive_PD.k = 0;
-				Drive_PD.Error[k] = Drive_PD.Target - Position;
+				Drive_PD.k = k;
+				Drive_PD.Error[k] = Position - Drive_PD.Target;
 				Error_Sign = (Drive_PD.Error[k] > 0) - (Drive_PD.Error[k] < 0);
 
 				// Calculate Derivative
@@ -95,23 +94,27 @@ task Auto_Drive() {
 				/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// Assign Left and Right Drive_Power
 
-				L_Drive_Power = P_Drive*Drive_PD.Error[k] + D_Drive*Velocity; // Assign L
+				/* Assign L.
+				      If the error is positive then the robot must be past the target. We want
+				      the robot to move backwards twoards the target (-kx).
+
+				      If the robot's velocity is positive, then we need to damp it out (-d*x').
+				*/
+				L_Drive_Power = (signed char)(-P_Drive*Drive_PD.Error[k] - D_Drive*Velocity); // Assign L
 
 				// Limit max velocity (before corrections) to specified power to drive power
 				if (abs(L_Drive_Power) > abs(Drive_PD.Power)) {
-					L_Drive_Power = (Error_Sign)*(Drive_PD.Power);
+					L_Drive_Power = -(Error_Sign)*(Drive_PD.Power);
 				} // if (abs(L_Drive_Power) > abs(Drive_PD.Power)) {
 
 				R_Drive_Power = L_Drive_Power;				// Assign R
 
-				// Print P,D correction terms to debug stream (if connected)... mostly for tuning
-				writeDebugStreamLine("P: %i D: %i",P_Drive*Drive_PD.Error[k],D_Drive*Velocity);
+				// Print spring, damper terms to debug stream (if connected)... mostly for tuning
+				writeDebugStreamLine("-kx: %i -dx': %i L Power: %i",-P_Drive*Drive_PD.Error[k],-D_Drive*Velocity, L_Drive_Power);
 
 				// 	Now we add in the corrections. These corrections are set in the Drive_Assist task.
 				L_Drive_Power += L_Drive_Correction;
 				R_Drive_Power += R_Drive_Correction;
-				//L_Drive_Power += L_Drive_Correction*((float)L_Drive_Power/(float)Drive_PD.Power);
-				//R_Drive_Power += R_Drive_Correction*((float)R_Drive_Power/(float)Drive_PD.Power);
 
 				// Now, set drive. If we're close
 				Auto_Set_Drive(L_Drive_Power, R_Drive_Power);
@@ -124,7 +127,6 @@ task Auto_Drive() {
 			Drive_PD.Offset = Drive_PD.Error[k];
 			Drive_PD.Power = 0;
 			Drive_PD.Target = 0;
-			Drive_PD.Target_Sign = 0;
 			Break_Out_Counter = 0;
 			Drive_Assist_Enable = 0;
 			Drive_Enable = 0;
@@ -141,7 +143,6 @@ task Drive_Assist(){
 	// Declare Local variables
 	float Angle;
 	float Angular_Velocity;
-	Byte Target_Sign;
 	Byte i;										// Counter variable (for loops)
 	Byte k;										// Cycle variable to update Error Array
 
@@ -149,8 +150,6 @@ task Drive_Assist(){
 	while(true) {
 		// If enabled, set up drive stuff
 		if(Drive_Assist_Enable) {
-			Target_Sign = (Drive_PD.Target > 0) - (Drive_PD.Target < 0);
-
 			// Error, Velocity setup.
 			for(i = 0; i < 5; i++) {
 				Turn_PD.Error[i] = Turn_PD.Offset;
@@ -161,14 +160,13 @@ task Drive_Assist(){
 			while(Drive_Assist_Enable) {
 				// Update Drive position. Turn_PD.Offset contains the last Angle Error. The angle is
 				// positive if the robot has rotated clockwise about the +z axis.
-				Angle = DEG_PER_TICK*.5*(SensorValue[R_Drive_Encoder] - SensorValue[L_Drive_Encoder]) - Turn_PD.Offset;
-
+				Angle = DEG_PER_TICK*.5*(SensorValue[R_Drive_Encoder] - SensorValue[L_Drive_Encoder]) + Turn_PD.Offset;
 
 				// Update Errors.
 				k++;					// Incremenet Error counter
 				k = mod(k,5);
 				Turn_PD.k = k;
-				Turn_PD.Error[k] = 0 - Angle;	// With Drive assist, the target angle is always 0
+				Turn_PD.Error[k] = Angle - 0;	// With Drive assist, the target angle is always 0
 
 				// Calculate Derivative
 				Angular_Velocity = (1000./(12.*Drive_Refresh_Time))*( 25*Turn_PD.Error[k]
@@ -177,9 +175,17 @@ task Drive_Assist(){
 				                                                    - 16*Turn_PD.Error[mod(k-3,5)]
 				                                                    +  3*Turn_PD.Error[mod(k-4,5)]);
 
-				// Assign L, R correction
-				R_Drive_Correction = P_Drive_Assist*Turn_PD.Error[k] + D_Drive_Assist*Angular_Velocity;
-				R_Drive_Correction = Drive_PD.Target_Sign*R_Drive_Correction; // So that the error is correct if the robot drives backwards
+				/* Assign R correction
+				      If the Error is positive, then the robot has rotated counter-clock-wise
+				      relative to equilibrium. We need a negative torque to get back to
+				      equilibrium (-kx). This means speeding up the Left and slowing down the right.
+
+				      If the error is increasing (positive angular velocity), then the robot is
+				      rotating in the ccw direction. We need to damp this out with a clockwise torque
+				      (-d*x'). This again means speeding up the Left and slowing down the right.
+				*/
+				R_Drive_Correction = (signed char)(-P_Drive_Assist*Turn_PD.Error[k] - D_Drive_Assist*Angular_Velocity);
+
 				L_Drive_Correction = -R_Drive_Correction;
 				/* L correction is neg of R correction. To understand why this is, we need to consider
 				   how this code works. If the Robot has rotated a clockwise angle, then the angle will
@@ -189,13 +195,17 @@ task Drive_Assist(){
 				   subtracting them from the L. Therefore, the L correction is the negative of the R correction
 				   The same is true, but with all the signs reversed, when the robot is moving backwards.
 				*/
+
+				// Print corrections to debug stream (if connected)... mostly for tuning
+				writeDebugStreamLine("L: %i R: %i",L_Drive_Correction, R_Drive_Correction);
+
 				wait1Msec(Drive_Refresh_Time);
 			} // while (Drive_Assist_Enable)
 			//// shut down, reset global target values ////
 			Turn_PD.Offset = Turn_PD.Error[k];
 			L_Drive_Correction = 0;
 			R_Drive_Correction = 0;
-		}	// if(Drive_Enable)
+		}	// if(Drive_Assist_Enable)
 		else {
 			wait1Msec(Drive_Refresh_Time);
 		} // else {

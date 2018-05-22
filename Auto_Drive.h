@@ -16,7 +16,7 @@ task Auto_Drive();
 	#define Drive_Min_Velocity 20                             // In ticks per second
 
 task Drive_Assist();
-	short Drive_Assist_Enable = 0;
+	Byte Drive_Assist_Enable = 0;
 	Byte L_Drive_Correction = 0;
 	Byte R_Drive_Correction = 0;
 	#define P_Drive_Assist 3.5
