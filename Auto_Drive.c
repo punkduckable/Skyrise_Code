@@ -1,4 +1,4 @@
-void Drive(int Power, int Target_Value) {
+void Drive(Byte Power, int Target_Value) {
 	// Check that power is a positive number
 	if (Power < 0) { return; }
 
@@ -9,7 +9,7 @@ void Drive(int Power, int Target_Value) {
 
 	// Enable auto_Drive
 	Drive_Enable = 1;
-} // void Run_Drive(int Power, int Target_Value)
+} // void Run_Drive(Byte Power, int Target_Value)
 
 task Auto_Drive() {
 	// Declare Local variables
@@ -21,6 +21,12 @@ task Auto_Drive() {
 	int L_Drive_Power, R_Drive_Power;					// Power for left and right side of drive
 	Byte i;												// For loop counters
 	Byte k;												// Used to know which value of Error Array to update
+
+	// Setup Drive_PD.
+	Drive_PD.Power = 0;
+	Drive_PD.Target = 0;
+	Drive_PD.Target_Sign = 0;
+	Drive_PD.Offset = 0;
 
 	// Loop continuously, waiting to be enabled
 	while(true) {
@@ -139,12 +145,6 @@ task Drive_Assist(){
 	float Angular_Velocity;
 	Byte i;										// Counter variable (for loops)
 	Byte k;										// Cycle variable to update Error Array
-
-	//////// REMOVE ONCE AUTO_TURN IS DEFINE
-	Turn_PD.Power = 0;
-	Turn_PD.Target = 0;
- 	Turn_PD.Target_Sign = 0;
- 	Turn_PD.Offset = 0;
 
 	// Loop continuously, waiting to be enabled
 	while(true) {
