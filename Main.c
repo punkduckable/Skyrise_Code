@@ -31,7 +31,7 @@
 #define MOI_Conversion_Factor .05
 float Robot_MOI = Base_Robot_MOI*MOI_Conversion_Factor;// + .08+0.06;
 
-#define DEG_PER_TICK 0.40625
+#define DEG_PER_TICK 0.2088
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Type definitions
