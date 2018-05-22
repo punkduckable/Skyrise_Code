@@ -1,5 +1,5 @@
-#ifndef TELE_SKYRISE
-#define TELE_SKYRISE
+#ifndef _TELE_SKYRISE
+#define _TELE_SKYRISE
 
 // Prototypes, Global Variables
 task Tele_Skyrise();

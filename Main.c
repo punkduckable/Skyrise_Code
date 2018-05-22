@@ -48,6 +48,7 @@ typedef signed char Byte;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Header files
 
+#include "LCD.h"
 #include "Auto_Drive.h"
 //#include "Auto_Turn.h"
 //#include "Auto_Lift.h"
@@ -78,13 +79,24 @@ void pre_auton()
 
 task autonomous()
 {
+	startTask(LCD);
 	startTask(Auto_Drive);
 	startTask(Drive_Assist);
+
+	Drive_Timer = 0;
+	clearTimer(T1);
 
 	Drive(100,500);
 	while(Drive_Enable) {
 		wait1Msec(50);
 	}
+
+	Drive(100,500);
+	while(Drive_Enable) {
+		wait1Msec(50);
+	}
+
+	Drive_Timer = time1(T1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

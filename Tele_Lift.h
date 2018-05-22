@@ -1,5 +1,5 @@
-#ifndef TELE_LIFT
-#define TELE_LIFT
+#ifndef _TELE_LIFT
+#define _TELE_LIFT
 
 task Tele_Lift();
 
