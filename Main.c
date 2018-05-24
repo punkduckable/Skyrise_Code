@@ -24,36 +24,85 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Dynamic properties of robot
 
-#define Base_Robot_Mass 6.7 // In Kg
-#define Mass_Conversion_Factor .00043
-float Robot_Mass = Base_Robot_Mass*Mass_Conversion_Factor;
-#define Base_Mobile_Goal_Mass 1.7
-#define Mobile_Goal_Mass (Base_Mobile_Goal_Mass*Mass_Conversion_Factor) // Kg
+#define NATURAL_ROBOT_MASS 0.0169119        // Measured using oscillation test. m = k/(4(pi^2+ln(A1/A2)^2))
+#define NATURAL_ROBOT_DAMPING 0.0946197     // Measured using Oscillation test. d = k*ln(A1/A2) /(pi^2 + ln(A1/A2)^2)
 
 #define Base_Robot_MOI .17 // Kg-M^2
 #define MOI_Conversion_Factor .05
 float Robot_MOI = Base_Robot_MOI*MOI_Conversion_Factor;// + .08+0.06;
 
-#define DEG_PER_TICK 0.40625
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Type definitions
 
-typedef struct {
-	signed char Power;
-	int Target;
-	signed char Target_Sign;
-	int Offset;
-} PD_Control;
-
 typedef signed char Byte;
 
+typedef struct {
+	Byte Power;                                 // Maximum power value
+	int Target;                                 // Target value
+	float Error[5];                             // Error array
+	Byte k;                                     // Error arry index counter (tells us which element of Error is newest)
+	float Offset;                               // Error offset (for error handoff)
+} PD_Control;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Include files
+// Power arrays
+
+const unsigned char Auto_Power_Array[128] = {
+	0,  15, 15, 15, 15, 15, 15, 16, 16, 16,
+	16, 16, 16, 16, 16, 16, 16, 16, 16, 17,
+	17, 17, 17, 17, 17, 18, 18, 18, 19, 20,
+	21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+	31, 32, 33, 34, 35, 36, 36, 37, 38, 38,
+	38, 39, 40, 40, 40, 40, 40, 41, 41, 42,
+	42, 43, 43, 43, 43, 44, 45, 45, 45, 45,
+	46, 46, 47, 48, 48, 49, 49, 49, 49, 50,
+	51, 51, 53, 53, 53, 54, 56, 56, 56, 58,
+	58, 69, 69, 69, 69, 69, 69, 69, 69, 69,
+	69, 73, 73, 78, 78, 78, 79, 79, 81, 81,
+	81, 81, 87, 88, 88, 88, 89, 89, 89, 94,
+	94, 94, 94, 110, 119, 127, 127, 127
+};
+
+const unsigned char Tele_Power_Array[128] = {
+	0,  26, 26, 27, 27, 27, 27, 27, 29, 29,
+	29, 29, 29, 29, 29, 29, 29, 30, 30, 30,
+	30, 30, 31, 31, 31, 31, 32, 32, 32, 32,
+	32, 32, 32, 32, 33, 33, 34, 34, 34, 34,
+	35, 35, 35, 36, 36, 36, 36, 37, 38, 38,
+	38, 39, 40, 40, 40, 40, 40, 41, 41, 42,
+	42, 43, 43, 43, 43, 44, 45, 45, 45, 45,
+	46, 46, 47, 48, 48, 49, 49, 49, 49, 50,
+	51, 51, 53, 53, 53, 54, 56, 56, 56, 58,
+	58, 69, 69, 69, 69, 69, 69, 69, 69, 69,
+	69, 73, 73, 78, 78, 78, 79, 79, 81, 81,
+	81, 81, 87, 88, 88, 88, 89, 89, 89, 94,
+	94, 94, 94, 110, 119, 127, 127, 127
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Header files
+
 #include "LCD.h"
-#include "Tele.c"
-#include "Auto.c"
+#include "Auto_Drive.h"
+#include "Auto_Turn.h"
+//#include "Auto_Lift.h"
+#include "Tele_Drive.h"
+#include "Tele_Intake.h"
+#include "Tele_Lift.h"
+#include "Tele_Skyrise.h"
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Source files
+
+#include "LCD.c"
+#include "Auto_Drive.c"
+#include "Auto_Turn.c"
+//#include "Auto_Lift.c"
+#include "Tele_Drive.c"
+#include "Tele_Intake.c"
+#include "Tele_Lift.c"
+#include "Tele_Skyrise.c"
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Auto, Pre Auto
@@ -64,13 +113,20 @@ void pre_auton()
 
 task autonomous()
 {
+	startTask(LCD);
 	startTask(Auto_Drive);
+	startTask(Auto_Turn);
 	startTask(Drive_Assist);
+
+	Drive_Timer = 0;
+	clearTimer(T1);
 
 	Drive(120,500);
 	while(Drive_Enable) {
-		wait1Msec(50);
+		wait1Msec(10);
 	}
+
+	Drive_Timer = time1(T1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,36 +1,45 @@
 To do....
 
 Build:
+	Redo lift bolts to prevnet catching. 
 	Add lift encoders
 	Lighten lift (swap steel with aluminum, nylon)
 	Redo wiring
 	Y axis dummy wheel
 	
 Programming:
-	Figure out robot's natural mass/damping
+	DONE: Write Auto_Drive task. 
+		Use 5pt derivative approximation. Store old error values in an array.
+		
+	DONE: 	Write Auto_Drive_Assist task.
+
+	DONE: Figure out robot's natural mass/damping
 		Create a P loop. Set the P to some value. Set an initial offset.
 		Let robot oscillate back and forth. Time periods, decay in amplitude.
 		Display these values to debug stream?
 		Use these values to find the robots 'natural mass' and 'natural damping'
 		values. From this, I should be able to pick a more effective D value (to 
 		get perfect critical damping). 
+			
+	DONE: Add headerfiles for all major functions/tasks! Include these before source files!!!
 
-	Write Auto_Drive task. 
-		Use 5pt derivative approximation. Store old error values in an array.
+	DONE: Test robot's natural mass/damping values. See if we can get good critical damping
 
-	Enable continuous error tracking
+	DONE: Figure out conversion between encoder ticks and degrees.
 
-	Replace Target_Sign member variable with local variables (it doesn't need
-	to be in the struct)
-	
-	Rewrite Auto_Turn task. MAKE SURE THAT ERROR IS TARGET - ANGLE!!!!
+	DONE: Update PD_Control structure. Add Error array to the strcut remove Target_Sign 		(make it a local variable in the tasks that use it)!
+
+	DONE: Rewrite Auto_Turn task. MAKE SURE THAT ERROR IS TARGET - ANGLE!!!!
 
 	Write simple Auto_Intake, Auto_Skyrise, Auto_Tail functions.
 
-	Figure out conversion between encoder ticks and degrees.
-
-	Write Auto_Drive_Assist task.
-
-	Write Tele_Lift task (keep lift straight... basically drive straight)
-
+	Write Tele_Lift task (keep lift straight...)
+		This should function the same way that the drive straight task 
+	
 	Write Auto_Lift, Auto_Lift_Assist tasks
+
+	Improve drive PD constants
+
+	Improve Turn PD constants
+
+	Improve Lift PD constants
