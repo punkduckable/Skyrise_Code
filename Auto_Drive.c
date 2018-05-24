@@ -112,7 +112,7 @@ task Auto_Drive() {
 				} // if (abs(L_Drive_Power) > abs(Drive_PD.Power)) {
 
 				R_Drive_Power = L_Drive_Power;				// Assign R
-				
+
 				// Print P,D correction terms to debug stream (if connected)... mostly for tuning
 				writeDebugStreamLine("%4i,  %4i,  %6.3f",time1(T1), Drive_PD.Error[k], Velocity);
 
@@ -201,7 +201,7 @@ task Drive_Assist(){
 				*/
 
 				// Print corrections to debug stream (if connected)... mostly for tuning
-				writeDebugStreamLine("L: %i R: %i",L_Drive_Correction, R_Drive_Correction);
+				//writeDebugStreamLine("L: %i R: %i",L_Drive_Correction, R_Drive_Correction);
 
 				wait1Msec(Drive_Refresh_Time);
 			} // while (Drive_Assist_Enable)

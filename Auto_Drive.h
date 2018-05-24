@@ -8,7 +8,7 @@ void Drive(Byte Power, int Target_Value);
 task Auto_Drive();
 	PD_Control Drive_PD;
 	#define Drive_Refresh_Time 15                             // in miliseconds
-	#define P_Drive .5                                        // needs to be large enough to get us to the target from any displacement
+	#define P_Drive 1.0                                        // needs to be large enough to get us to the target from any displacement
 	#define D_Drive (sqrt(4*P_Drive*NATURAL_ROBOT_MASS)\
 	                               -NATURAL_ROBOT_DAMPING)    // This is determined by solving 2nd order diff eq for critical damping. See notebook
 	#define Drive_Power_Minimum 12                            // Lowest power before breakout
