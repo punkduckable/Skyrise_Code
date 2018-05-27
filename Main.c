@@ -121,9 +121,9 @@ task autonomous()
 	Drive_Timer = 0;
 	clearTimer(T1);
 
-	Drive(120,500);
-	while(Drive_Enable) {
-		wait1Msec(10);
+	Turn(120,150);
+	while(Turn_Enable) {
+		wait1Msec(Turn_Refresh_Time);
 	}
 
 	Drive_Timer = time1(T1);
