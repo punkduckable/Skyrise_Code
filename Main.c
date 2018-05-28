@@ -24,17 +24,18 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Dynamic properties of robot
 
-#define NATURAL_ROBOT_MASS 0.0169119        // Measured using oscillation test. m = k/(4(pi^2+ln(A1/A2)^2))
-#define NATURAL_ROBOT_DAMPING 0.0946197     // Measured using Oscillation test. d = k*ln(A1/A2) /(pi^2 + ln(A1/A2)^2)
+#define NATURAL_ROBOT_MASS 0.0169119        // Measured using oscillation test. m = k(T/2)^2/((pi^2+ln(A1/A2)^2))
+#define NATURAL_DRIVE_DAMPING 0.0946197     // Measured using Oscillation test. d = (2*m/(T/2))*ln(A1/A2)
 
-#define Base_Robot_MOI .17 // Kg-M^2
-#define MOI_Conversion_Factor .05
-float Robot_MOI = Base_Robot_MOI*MOI_Conversion_Factor;// + .08+0.06;
+#define NATURAL_ROBOT_MOI 0.0627881          // Measured using oscillation test. m = k(T/2)^2/((pi^2+ln(A1/A2)^2))
+#define NATURAL_TURN_DAMPING 0.532003    // Measured using Oscillation test. d = (2*m/(T/2))*ln(A1/A2)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Type definitions
 
 typedef signed char Byte;
+typedef signed char Bool;
+typedef unsigned char uByte;
 
 typedef struct {
 	Byte Power;                                 // Maximum power value
@@ -48,19 +49,19 @@ typedef struct {
 // Power arrays
 
 const unsigned char Auto_Power_Array[128] = {
-	0,  15, 15, 15, 15, 15, 15, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16, 16, 17,
-	17, 17, 17, 17, 17, 18, 18, 18, 19, 20,
-	21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-	31, 32, 33, 34, 35, 36, 36, 37, 38, 38,
-	38, 39, 40, 40, 40, 40, 40, 41, 41, 42,
-	42, 43, 43, 43, 43, 44, 45, 45, 45, 45,
-	46, 46, 47, 48, 48, 49, 49, 49, 49, 50,
-	51, 51, 53, 53, 53, 54, 56, 56, 56, 58,
-	58, 69, 69, 69, 69, 69, 69, 69, 69, 69,
-	69, 73, 73, 78, 78, 78, 79, 79, 81, 81,
-	81, 81, 87, 88, 88, 88, 89, 89, 89, 94,
-	94, 94, 94, 110, 119, 127, 127, 127
+  0,  24,  24,  25,  27,  27,  27,  28,  28,  28,
+ 28,  28,  29,  29,  29,  30,  30,  30,  35,  35,
+ 36,  37,  38,  38,  38,  38,  39,  39,  39,  39,
+ 39,  42,  42,  42,  42,  42,  43,  45,  45,  45,
+ 45,  45,  46,  46,  48,  48,  48,  49,  49,  50,
+ 51,  51,  52,  52,  53,  53,  54,  54,  54,  55,
+ 56,  56,  56,  58,  58,  59,  60,  60,  60,  62,
+ 62,  62,  62,  63,  64,  65,  66,  66,  66,  67,
+ 68,  68,  69,  69,  70,  70,  72,  72,  72,  74,
+ 74,  74,  75,  75,  75,  77,  78,  78,  78,  80,
+ 80,  80,  81,  81,  83,  83,  83,  84,  85,  85,
+ 85,  86,  87,  90,  90, 104, 108, 108, 113, 115,
+117, 117, 119, 121, 123, 125, 126, 127
 };
 
 const unsigned char Tele_Power_Array[128] = {
@@ -120,14 +121,11 @@ task autonomous()
 
 	Drive_Timer = 0;
 	clearTimer(T1);
-	/*
-	Turn(100,360);
+	Turn(110,90);
 	while(Turn_Enable) {
 		wait1Msec(10);
 	}
-
-	wait1Msec(2000);
-	*/
+	/*
 	Drive(70,1000);
 	while(Drive_Enable) {
 		wait1Msec(10);
@@ -137,6 +135,7 @@ task autonomous()
 	while(Drive_Enable) {
 		wait1Msec(10);
 	}
+	*/
 
 	Drive_Timer = time1(T1);
 }

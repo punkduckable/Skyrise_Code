@@ -74,12 +74,17 @@ task Auto_Drive() {
 
 					Finally, recall that the refresh time is in miliseconds. Thus, we have to convert it to
 					regular seconds
+
+					We only assign a velocity if k > 5 (allowing the velocity loop to fill with actual data
 				*/
-				Velocity = (1000./(12.*Drive_Refresh_Time))*( 25*Drive_PD.Error[k]
-				                                            - 48*Drive_PD.Error[mod(k-1,5)]
-				                                            + 36*Drive_PD.Error[mod(k-2,5)]
-				                                            - 16*Drive_PD.Error[mod(k-3,5)]
-				                                            +  3*Drive_PD.Error[mod(k-4,5)]);
+				if(k < 5)
+					Velocity = 0;
+				else
+					Velocity = (1000./(12.*Drive_Refresh_Time))*( 25*Drive_PD.Error[k]
+				                                              - 48*Drive_PD.Error[mod(k-1,5)]
+				                                              + 36*Drive_PD.Error[mod(k-2,5)]
+				                                              - 16*Drive_PD.Error[mod(k-3,5)]
+				                                              +  3*Drive_PD.Error[mod(k-4,5)]);
 				/* 	Check for stall (if velocity is below threshold).
 					We only run this check if we've moved 100 ticks twoards the target. This is done
 					because the robot starts off not moving. Thus, the robot may think it has stalled
@@ -143,7 +148,6 @@ task Drive_Assist(){
 	// Declare Local variables
 	float Angle;
 	float Angular_Velocity;
-	Byte i;										// Counter variable (for loops)
 	Byte k;										// Cycle variable to update Error Array
 
 	// Loop continuously, waiting to be enabled
@@ -151,8 +155,8 @@ task Drive_Assist(){
 		// If enabled, set up drive stuff
 		if(Drive_Assist_Enable) {
 			// Error, Velocity setup.
-			for(i = 0; i < 5; i++) {
-				Turn_PD.Error[i] = Turn_PD.Offset;
+			for(k = 0; k < 5; k++) {
+				Turn_PD.Error[k] = Turn_PD.Offset;
 			}
 			Angular_Velocity = 0;
 
