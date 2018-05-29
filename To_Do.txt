@@ -1,9 +1,10 @@
 To do....
 
 Build:
-	Redo lift bolts to prevnet catching. 
+	DONE: Redo lift bolts to prevnet catching. 
 	Add lift encoders
 	Lighten lift (swap steel with aluminum, nylon)
+		Total weight saved: 64 g
 	Redo wiring
 	Y axis dummy wheel
 	
