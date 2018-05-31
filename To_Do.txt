@@ -4,7 +4,10 @@ Build:
 	DONE: Redo lift bolts to prevnet catching. 
 	Add lift encoders
 	Lighten lift (swap steel with aluminum, nylon)
-		Total weight saved: 64 + 73 g
+		Total weight saved: 64 + 73 + 89 g
+	Fix lower 6 bar main bar (flip around)
+		The main bar of the lower 6 bar is bending/warping.
+		the bar needs to be flipped around/mounted like the main bar of the upper 6 bar is.
 	Redo wiring
 	Y axis dummy wheel
 	
